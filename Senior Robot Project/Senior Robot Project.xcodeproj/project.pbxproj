@@ -1,0 +1,602 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3E63076920B3496000BC20C6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E63076820B3496000BC20C6 /* AppDelegate.swift */; };
+		3E63076B20B3496000BC20C6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E63076A20B3496000BC20C6 /* ViewController.swift */; };
+		3E63076E20B3496000BC20C6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E63076C20B3496000BC20C6 /* Main.storyboard */; };
+		3E63077120B3496000BC20C6 /* Senior_Robot_Project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3E63076F20B3496000BC20C6 /* Senior_Robot_Project.xcdatamodeld */; };
+		3E63077320B3496400BC20C6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E63077220B3496400BC20C6 /* Assets.xcassets */; };
+		3E63077620B3496400BC20C6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E63077420B3496400BC20C6 /* LaunchScreen.storyboard */; };
+		3E63078120B3496400BC20C6 /* Senior_Robot_ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E63078020B3496400BC20C6 /* Senior_Robot_ProjectTests.swift */; };
+		3E63078C20B3496400BC20C6 /* Senior_Robot_ProjectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E63078B20B3496400BC20C6 /* Senior_Robot_ProjectUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3E63077D20B3496400BC20C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E63075D20B3496000BC20C6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E63076420B3496000BC20C6;
+			remoteInfo = "Senior Robot Project";
+		};
+		3E63078820B3496400BC20C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E63075D20B3496000BC20C6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E63076420B3496000BC20C6;
+			remoteInfo = "Senior Robot Project";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3E63076520B3496000BC20C6 /* Senior Robot Project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Senior Robot Project.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E63076820B3496000BC20C6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3E63076A20B3496000BC20C6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		3E63076D20B3496000BC20C6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		3E63077020B3496000BC20C6 /* Senior_Robot_Project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Senior_Robot_Project.xcdatamodel; sourceTree = "<group>"; };
+		3E63077220B3496400BC20C6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3E63077520B3496400BC20C6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		3E63077720B3496400BC20C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3E63077C20B3496400BC20C6 /* Senior Robot ProjectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Senior Robot ProjectTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E63078020B3496400BC20C6 /* Senior_Robot_ProjectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Senior_Robot_ProjectTests.swift; sourceTree = "<group>"; };
+		3E63078220B3496400BC20C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3E63078720B3496400BC20C6 /* Senior Robot ProjectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Senior Robot ProjectUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E63078B20B3496400BC20C6 /* Senior_Robot_ProjectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Senior_Robot_ProjectUITests.swift; sourceTree = "<group>"; };
+		3E63078D20B3496400BC20C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3E63076220B3496000BC20C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E63077920B3496400BC20C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E63078420B3496400BC20C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3E63075C20B3496000BC20C6 = {
+			isa = PBXGroup;
+			children = (
+				3E63076720B3496000BC20C6 /* Senior Robot Project */,
+				3E63077F20B3496400BC20C6 /* Senior Robot ProjectTests */,
+				3E63078A20B3496400BC20C6 /* Senior Robot ProjectUITests */,
+				3E63076620B3496000BC20C6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3E63076620B3496000BC20C6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3E63076520B3496000BC20C6 /* Senior Robot Project.app */,
+				3E63077C20B3496400BC20C6 /* Senior Robot ProjectTests.xctest */,
+				3E63078720B3496400BC20C6 /* Senior Robot ProjectUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3E63076720B3496000BC20C6 /* Senior Robot Project */ = {
+			isa = PBXGroup;
+			children = (
+				3E63076820B3496000BC20C6 /* AppDelegate.swift */,
+				3E63076A20B3496000BC20C6 /* ViewController.swift */,
+				3E63076C20B3496000BC20C6 /* Main.storyboard */,
+				3E63077220B3496400BC20C6 /* Assets.xcassets */,
+				3E63077420B3496400BC20C6 /* LaunchScreen.storyboard */,
+				3E63077720B3496400BC20C6 /* Info.plist */,
+				3E63076F20B3496000BC20C6 /* Senior_Robot_Project.xcdatamodeld */,
+			);
+			path = "Senior Robot Project";
+			sourceTree = "<group>";
+		};
+		3E63077F20B3496400BC20C6 /* Senior Robot ProjectTests */ = {
+			isa = PBXGroup;
+			children = (
+				3E63078020B3496400BC20C6 /* Senior_Robot_ProjectTests.swift */,
+				3E63078220B3496400BC20C6 /* Info.plist */,
+			);
+			path = "Senior Robot ProjectTests";
+			sourceTree = "<group>";
+		};
+		3E63078A20B3496400BC20C6 /* Senior Robot ProjectUITests */ = {
+			isa = PBXGroup;
+			children = (
+				3E63078B20B3496400BC20C6 /* Senior_Robot_ProjectUITests.swift */,
+				3E63078D20B3496400BC20C6 /* Info.plist */,
+			);
+			path = "Senior Robot ProjectUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3E63076420B3496000BC20C6 /* Senior Robot Project */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E63079020B3496500BC20C6 /* Build configuration list for PBXNativeTarget "Senior Robot Project" */;
+			buildPhases = (
+				3E63076120B3496000BC20C6 /* Sources */,
+				3E63076220B3496000BC20C6 /* Frameworks */,
+				3E63076320B3496000BC20C6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Senior Robot Project";
+			productName = "Senior Robot Project";
+			productReference = 3E63076520B3496000BC20C6 /* Senior Robot Project.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3E63077B20B3496400BC20C6 /* Senior Robot ProjectTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E63079320B3496500BC20C6 /* Build configuration list for PBXNativeTarget "Senior Robot ProjectTests" */;
+			buildPhases = (
+				3E63077820B3496400BC20C6 /* Sources */,
+				3E63077920B3496400BC20C6 /* Frameworks */,
+				3E63077A20B3496400BC20C6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3E63077E20B3496400BC20C6 /* PBXTargetDependency */,
+			);
+			name = "Senior Robot ProjectTests";
+			productName = "Senior Robot ProjectTests";
+			productReference = 3E63077C20B3496400BC20C6 /* Senior Robot ProjectTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		3E63078620B3496400BC20C6 /* Senior Robot ProjectUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E63079620B3496500BC20C6 /* Build configuration list for PBXNativeTarget "Senior Robot ProjectUITests" */;
+			buildPhases = (
+				3E63078320B3496400BC20C6 /* Sources */,
+				3E63078420B3496400BC20C6 /* Frameworks */,
+				3E63078520B3496400BC20C6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3E63078920B3496400BC20C6 /* PBXTargetDependency */,
+			);
+			name = "Senior Robot ProjectUITests";
+			productName = "Senior Robot ProjectUITests";
+			productReference = 3E63078720B3496400BC20C6 /* Senior Robot ProjectUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3E63075D20B3496000BC20C6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0930;
+				LastUpgradeCheck = 0930;
+				ORGANIZATIONNAME = "Kazi Tasnim";
+				TargetAttributes = {
+					3E63076420B3496000BC20C6 = {
+						CreatedOnToolsVersion = 9.3;
+					};
+					3E63077B20B3496400BC20C6 = {
+						CreatedOnToolsVersion = 9.3;
+						TestTargetID = 3E63076420B3496000BC20C6;
+					};
+					3E63078620B3496400BC20C6 = {
+						CreatedOnToolsVersion = 9.3;
+						TestTargetID = 3E63076420B3496000BC20C6;
+					};
+				};
+			};
+			buildConfigurationList = 3E63076020B3496000BC20C6 /* Build configuration list for PBXProject "Senior Robot Project" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3E63075C20B3496000BC20C6;
+			productRefGroup = 3E63076620B3496000BC20C6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3E63076420B3496000BC20C6 /* Senior Robot Project */,
+				3E63077B20B3496400BC20C6 /* Senior Robot ProjectTests */,
+				3E63078620B3496400BC20C6 /* Senior Robot ProjectUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3E63076320B3496000BC20C6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E63077620B3496400BC20C6 /* LaunchScreen.storyboard in Resources */,
+				3E63077320B3496400BC20C6 /* Assets.xcassets in Resources */,
+				3E63076E20B3496000BC20C6 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E63077A20B3496400BC20C6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E63078520B3496400BC20C6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3E63076120B3496000BC20C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E63076B20B3496000BC20C6 /* ViewController.swift in Sources */,
+				3E63076920B3496000BC20C6 /* AppDelegate.swift in Sources */,
+				3E63077120B3496000BC20C6 /* Senior_Robot_Project.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E63077820B3496400BC20C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E63078120B3496400BC20C6 /* Senior_Robot_ProjectTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E63078320B3496400BC20C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E63078C20B3496400BC20C6 /* Senior_Robot_ProjectUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3E63077E20B3496400BC20C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3E63076420B3496000BC20C6 /* Senior Robot Project */;
+			targetProxy = 3E63077D20B3496400BC20C6 /* PBXContainerItemProxy */;
+		};
+		3E63078920B3496400BC20C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3E63076420B3496000BC20C6 /* Senior Robot Project */;
+			targetProxy = 3E63078820B3496400BC20C6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		3E63076C20B3496000BC20C6 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3E63076D20B3496000BC20C6 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		3E63077420B3496400BC20C6 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3E63077520B3496400BC20C6 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		3E63078E20B3496400BC20C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3E63078F20B3496400BC20C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3E63079120B3496500BC20C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2B6A3FCL45;
+				INFOPLIST_FILE = "Senior Robot Project/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "KaziTasnim.Senior-Robot-Project";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3E63079220B3496500BC20C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2B6A3FCL45;
+				INFOPLIST_FILE = "Senior Robot Project/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "KaziTasnim.Senior-Robot-Project";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3E63079420B3496500BC20C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Senior Robot ProjectTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "KaziTasnim.Senior-Robot-ProjectTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Senior Robot Project.app/Senior Robot Project";
+			};
+			name = Debug;
+		};
+		3E63079520B3496500BC20C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Senior Robot ProjectTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "KaziTasnim.Senior-Robot-ProjectTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Senior Robot Project.app/Senior Robot Project";
+			};
+			name = Release;
+		};
+		3E63079720B3496500BC20C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Senior Robot ProjectUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "KaziTasnim.Senior-Robot-ProjectUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Senior Robot Project";
+			};
+			name = Debug;
+		};
+		3E63079820B3496500BC20C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "Senior Robot ProjectUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "KaziTasnim.Senior-Robot-ProjectUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Senior Robot Project";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3E63076020B3496000BC20C6 /* Build configuration list for PBXProject "Senior Robot Project" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E63078E20B3496400BC20C6 /* Debug */,
+				3E63078F20B3496400BC20C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E63079020B3496500BC20C6 /* Build configuration list for PBXNativeTarget "Senior Robot Project" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E63079120B3496500BC20C6 /* Debug */,
+				3E63079220B3496500BC20C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E63079320B3496500BC20C6 /* Build configuration list for PBXNativeTarget "Senior Robot ProjectTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E63079420B3496500BC20C6 /* Debug */,
+				3E63079520B3496500BC20C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E63079620B3496500BC20C6 /* Build configuration list for PBXNativeTarget "Senior Robot ProjectUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E63079720B3496500BC20C6 /* Debug */,
+				3E63079820B3496500BC20C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		3E63076F20B3496000BC20C6 /* Senior_Robot_Project.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				3E63077020B3496000BC20C6 /* Senior_Robot_Project.xcdatamodel */,
+			);
+			currentVersion = 3E63077020B3496000BC20C6 /* Senior_Robot_Project.xcdatamodel */;
+			path = Senior_Robot_Project.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 3E63075D20B3496000BC20C6 /* Project object */;
+}
