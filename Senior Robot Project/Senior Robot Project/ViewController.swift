@@ -33,6 +33,19 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     //UI
     @IBOutlet weak var baseTableView: UITableView!
     @IBOutlet weak var refreshButton: UIBarButtonItem!
+
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+       super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        loadViewIfNeeded();
+        print("init1")
+    }
+    
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        print("init2")
+    }
+    
     
     @IBAction func refreshAction(_ sender: AnyObject) {
         disconnectFromDevice()
@@ -50,6 +63,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         
         /*Our key player in this app will be our CBCentralManager. CBCentralManager objects are used to manage discovered or connected remote peripheral devices (represented by CBPeripheral objects), including scanning for, discovering, and connecting to advertising peripherals.
          */
+        print("log")
         centralManager = CBCentralManager(delegate: self, queue: nil)
         let backButton = UIBarButtonItem(title: "Disconnect", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem = backButton
@@ -373,3 +387,4 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         }
     }
 }
+

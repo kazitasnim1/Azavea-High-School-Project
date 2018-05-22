@@ -83,7 +83,6 @@
 		3E63075C20B3496000BC20C6 = {
 			isa = PBXGroup;
 			children = (
-				3E63079B20B46E3B00BC20C6 /* PeripheralTableViewCell.swift */,
 				3E63076720B3496000BC20C6 /* Senior Robot Project */,
 				3E63077F20B3496400BC20C6 /* Senior Robot ProjectTests */,
 				3E63078A20B3496400BC20C6 /* Senior Robot ProjectUITests */,
@@ -104,6 +103,7 @@
 		3E63076720B3496000BC20C6 /* Senior Robot Project */ = {
 			isa = PBXGroup;
 			children = (
+				3E63079B20B46E3B00BC20C6 /* PeripheralTableViewCell.swift */,
 				3E63076820B3496000BC20C6 /* AppDelegate.swift */,
 				3E63076A20B3496000BC20C6 /* ViewController.swift */,
 				3E63076C20B3496000BC20C6 /* Main.storyboard */,
