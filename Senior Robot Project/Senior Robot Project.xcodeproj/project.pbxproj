@@ -15,6 +15,8 @@
 		3E63077620B3496400BC20C6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E63077420B3496400BC20C6 /* LaunchScreen.storyboard */; };
 		3E63078120B3496400BC20C6 /* Senior_Robot_ProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E63078020B3496400BC20C6 /* Senior_Robot_ProjectTests.swift */; };
 		3E63078C20B3496400BC20C6 /* Senior_Robot_ProjectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E63078B20B3496400BC20C6 /* Senior_Robot_ProjectUITests.swift */; };
+		3E63079A20B4662700BC20C6 /* UUIDKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E63079920B4662700BC20C6 /* UUIDKey.swift */; };
+		3E63079C20B46E3B00BC20C6 /* PeripheralTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E63079B20B46E3B00BC20C6 /* PeripheralTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		3E63078720B3496400BC20C6 /* Senior Robot ProjectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Senior Robot ProjectUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E63078B20B3496400BC20C6 /* Senior_Robot_ProjectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Senior_Robot_ProjectUITests.swift; sourceTree = "<group>"; };
 		3E63078D20B3496400BC20C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3E63079920B4662700BC20C6 /* UUIDKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUIDKey.swift; sourceTree = "<group>"; };
+		3E63079B20B46E3B00BC20C6 /* PeripheralTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeripheralTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +83,7 @@
 		3E63075C20B3496000BC20C6 = {
 			isa = PBXGroup;
 			children = (
+				3E63079B20B46E3B00BC20C6 /* PeripheralTableViewCell.swift */,
 				3E63076720B3496000BC20C6 /* Senior Robot Project */,
 				3E63077F20B3496400BC20C6 /* Senior Robot ProjectTests */,
 				3E63078A20B3496400BC20C6 /* Senior Robot ProjectUITests */,
@@ -106,6 +111,7 @@
 				3E63077420B3496400BC20C6 /* LaunchScreen.storyboard */,
 				3E63077720B3496400BC20C6 /* Info.plist */,
 				3E63076F20B3496000BC20C6 /* Senior_Robot_Project.xcdatamodeld */,
+				3E63079920B4662700BC20C6 /* UUIDKey.swift */,
 			);
 			path = "Senior Robot Project";
 			sourceTree = "<group>";
@@ -259,8 +265,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E63079A20B4662700BC20C6 /* UUIDKey.swift in Sources */,
 				3E63076B20B3496000BC20C6 /* ViewController.swift in Sources */,
 				3E63076920B3496000BC20C6 /* AppDelegate.swift in Sources */,
+				3E63079C20B46E3B00BC20C6 /* PeripheralTableViewCell.swift in Sources */,
 				3E63077120B3496000BC20C6 /* Senior_Robot_Project.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -437,6 +445,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2B6A3FCL45;
 				INFOPLIST_FILE = "Senior Robot Project/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -455,6 +464,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2B6A3FCL45;
 				INFOPLIST_FILE = "Senior Robot Project/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
