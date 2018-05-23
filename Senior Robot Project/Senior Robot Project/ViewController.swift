@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import CoreBluetooth
-
+import CoreMotion
 
 var txCharacteristic : CBCharacteristic?
 var rxCharacteristic : CBCharacteristic?
@@ -29,6 +29,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     var characteristicValue = [CBUUID: NSData]()
     var timer = Timer()
     var characteristics = [String : CBCharacteristic]()
+    var motion = CMMotionManager()
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -89,6 +90,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     }
     
     func writeString(val: String) {
+        print(val)
         let str = (val as NSString).data(using: String.Encoding.utf8.rawValue)
         if let blePeripheral = blePeripheral {
             if let txCharacteristic = txCharacteristic {
@@ -331,7 +333,8 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
             }
             
             // TODO: here? elsewhere?
-            testDrive()
+            
+            startAccelerometers()
         }
     }
     
@@ -423,5 +426,75 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
             self.present(alertVC, animated: true, completion: nil)
         }
     }
+    func startAccelerometers() {
+        // Make sure the accelerometer hardware is available.
+        if self.motion.isAccelerometerAvailable {
+            self.motion.accelerometerUpdateInterval = 45.0 / 60.0  // 60 Hz
+            self.motion.startDeviceMotionUpdates(using: .xMagneticNorthZVertical)
+            print("start accelerometers")
+            // Configure a timer to fetch the data.
+        
+             self.timer = Timer(fire: Date(), interval: (45.0/60.0),
+                               repeats: true, block: { (timer) in
+                                if let data = self.motion.deviceMotion {
+                                    let pitch = data.attitude.pitch
+                                    let roll = data.attitude.roll
+                                     self.setWheelsfromAccel(p: pitch, r: roll)
+                                    print("values: \(pitch) \(roll)")
+                                }
+                             /*   // Get the accelerometer data.
+                                if let data = self.motion.accelerometerData {
+                                    let x = data.acceleration.x
+                                    let y = data.acceleration.y
+                                    let z = data.acceleration.z
+                                    print("got a reading: \(x) \(y) \(z)")
+                                    setWheelsfromAccel(p: <#T##Double#>, r: <#T##Double#>)
+                                    // Use the accelerometer data in your app.
+                                }*/
+            })
+            
+            // Add the timer to the current run loop.
+            RunLoop.current.add(self.timer, forMode: .defaultRunLoopMode)
+        }
+    }
+    func mapRange(a1: Double, a2: Double, b1: Double, b2: Double, s: Double) -> Double {
+        return b1 + ((s - a1)*(b2 - b1))/(a2 - a1)
+    }
+    func setWheelsfromAccel (p: Double, r: Double){
+        print("setWheelsfromAccel")
+        var rightSpeed: UInt8 = 0
+        var leftSpeed: UInt8 = 0
+        
+        var posPitch = false
+        var posRoll = false
+        
+        if (p > 0) {
+            posPitch = true;
+        }
+        if (r > 0) {
+            posRoll = true
+        }
+    
+        let pitch = abs(p)
+        let roll = abs(r)
+        rightSpeed = UInt8.init(mapRange(a1: 0, a2: 10, b1: 0, b2: 127, s: roll))
+        leftSpeed = rightSpeed
+        let pitchPct = mapRange(a1: 0, a2: 10, b1: 0, b2: 1, s: pitch)
+       
+        if (posPitch) {
+            leftSpeed -= leftSpeed * UInt8.init(pitchPct)
+        } else {
+            rightSpeed -= rightSpeed * UInt8.init(pitchPct)
+        }
+        if posRoll {
+            print("Speed: \(rightSpeed) \(leftSpeed)")
+            writeString(val: "v")
+            writeInteger(val: rightSpeed)
+            writeInteger(val: leftSpeed)
+        } else{
+            print("have no pos roll")
+        }
 }
+    
 
+}
