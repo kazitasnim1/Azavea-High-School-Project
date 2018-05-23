@@ -30,10 +30,6 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     var timer = Timer()
     var characteristics = [String : CBCharacteristic]()
     
-    //UI
-    @IBOutlet weak var baseTableView: UITableView!
-    @IBOutlet weak var refreshButton: UIBarButtonItem!
-
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         loadViewIfNeeded();
@@ -51,28 +47,24 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         disconnectFromDevice()
         self.peripherals = []
         self.RSSIs = []
-        self.baseTableView.reloadData()
         startScan()
     }
     
     override func viewDidLoad() {
+        print("viewDidLoad")
         super.viewDidLoad()
-        self.baseTableView.delegate = self
-        self.baseTableView.dataSource = self
-        self.baseTableView.reloadData()
         
         /*Our key player in this app will be our CBCentralManager. CBCentralManager objects are used to manage discovered or connected remote peripheral devices (represented by CBPeripheral objects), including scanning for, discovering, and connecting to advertising peripherals.
          */
-        print("log")
         centralManager = CBCentralManager(delegate: self, queue: nil)
         let backButton = UIBarButtonItem(title: "Disconnect", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem = backButton
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        print("view appeared")
         disconnectFromDevice()
         super.viewDidAppear(animated)
-        refreshScanView()
         print("View Cleared")
     }
     
@@ -82,6 +74,39 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         centralManager?.stopScan()
     }
     
+    func writeInteger(val: UInt8) {
+        if let blePeripheral = blePeripheral {
+            if let txCharacteristic = txCharacteristic {
+                var num = val
+                let data = NSData(bytes: &num, length: 1)
+                blePeripheral.writeValue(data as Data, for: txCharacteristic, type: CBCharacteristicWriteType.withResponse)
+            } else {
+                print("Cannot transmit to connected device!")
+            }
+        } else {
+            print("No device to transmit to")
+        }
+    }
+    
+    func writeString(val: String) {
+        let str = (val as NSString).data(using: String.Encoding.utf8.rawValue)
+        if let blePeripheral = blePeripheral {
+            if let txCharacteristic = txCharacteristic {
+                blePeripheral.writeValue(str!, for: txCharacteristic, type: CBCharacteristicWriteType.withResponse)
+            }
+        } else {
+            print("No device to transmit to")
+        }
+    }
+    
+    func testDrive() {
+        writeString(val: "b")
+        //writeString(val: "5")
+        //writeString(val: "5")
+        //writeInteger(val: 5)
+        //writeInteger(val: 5)
+    }
+    
     /*Okay, now that we have our CBCentalManager up and running, it's time to start searching for devices. You can do this by calling the "scanForPeripherals" method.*/
     
     func startScan() {
@@ -89,7 +114,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         print("Now Scanning...")
         self.timer.invalidate()
         centralManager?.scanForPeripherals(withServices: [BLEService_UUID] , options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
-        Timer.scheduledTimer(timeInterval: 17, target: self, selector: #selector(self.cancelScan), userInfo: nil, repeats: false)
+        Timer.scheduledTimer(timeInterval: 7, target: self, selector: #selector(self.cancelScan), userInfo: nil, repeats: false)
     }
     
     /*We also need to stop scanning at some point so we'll also create a function that calls "stopScan"*/
@@ -97,10 +122,20 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         self.centralManager?.stopScan()
         print("Scan Stopped")
         print("Number of Peripherals Found: \(peripherals.count)")
-    }
-    
-    func refreshScanView() {
-        baseTableView.reloadData()
+        
+        if (peripherals.count > 1) {
+            print("Found more than one peripheral! All are:")
+            for peripheral in peripherals {
+                print("\(peripheral.name)")
+            }
+        }
+        
+        if (peripherals.count > 0) {
+            print("Found peripheral; connecting...")
+            blePeripheral = peripherals[0]
+            print("\(blePeripheral?.name)")
+            connectToDevice()
+        }
     }
     
     //-Terminate all Peripheral Connection
@@ -132,7 +167,6 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         self.peripherals.append(peripheral)
         self.RSSIs.append(RSSI)
         peripheral.delegate = self
-        self.baseTableView.reloadData()
         if blePeripheral == nil {
             print("Found new pheripheral devices with services")
             print("Peripheral name: \(String(describing: peripheral.name))")
@@ -290,11 +324,14 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         if ((characteristic.descriptors) != nil) {
             
             for x in characteristic.descriptors!{
-                let descript = x as CBDescriptor!
+                let descript = x as CBDescriptor?
                 print("function name: DidDiscoverDescriptorForChar \(String(describing: descript?.description))")
                 print("Rx Value \(String(describing: rxCharacteristic?.value))")
                 print("Tx Value \(String(describing: txCharacteristic?.value))")
             }
+            
+            // TODO: here? elsewhere?
+            testDrive()
         }
     }
     
