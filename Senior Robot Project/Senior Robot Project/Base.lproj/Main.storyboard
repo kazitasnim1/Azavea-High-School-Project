@@ -26,10 +26,10 @@
             </objects>
             <point key="canvasLocation" x="-1285" y="86"/>
         </scene>
-        <!--View Controller-->
+        <!--Central View Controller-->
         <scene sceneID="PNU-zj-qNn">
             <objects>
-                <viewController id="lLa-XU-43Z" sceneMemberID="viewController">
+                <viewController id="lLa-XU-43Z" customClass="BLECentralViewController" customModule="Senior_Robot_Project" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ONN-1f-8IL">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
