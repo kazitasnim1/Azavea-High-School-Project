@@ -18,7 +18,7 @@ var characteristicASCIIValue = NSString()
 
 
 
-class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, UITableViewDelegate, UITableViewDataSource{
+class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     //Data
     var centralManager : CBCentralManager!
@@ -30,6 +30,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     var timer = Timer()
     var characteristics = [String : CBCharacteristic]()
     var motion = CMMotionManager()
+    var isDriving = false
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -377,32 +378,6 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         print("Succeeded!")
     }
     
-    //Table View Functions
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.peripherals.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //Connect to device where the peripheral is connected
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BlueCell") as! PeripheralTableViewCell
-        let peripheral = self.peripherals[indexPath.row]
-        let RSSI = self.RSSIs[indexPath.row]
-        
-        
-        if peripheral.name == nil {
-            cell.peripheralLabel.text = "nil"
-        } else {
-            cell.peripheralLabel.text = peripheral.name
-        }
-        cell.rssiLabel.text = "RSSI: \(RSSI)"
-        
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        blePeripheral = peripherals[indexPath.row]
-        connectToDevice()
-    }
     
     /*
      Invoked when the central manager’s state is updated.
@@ -437,10 +412,10 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
              self.timer = Timer(fire: Date(), interval: (45.0/60.0),
                                repeats: true, block: { (timer) in
                                 if let data = self.motion.deviceMotion {
-                                    let pitch = data.attitude.pitch
+                                    let yaw = data.attitude.yaw
                                     let roll = data.attitude.roll
-                                     self.setWheelsfromAccel(p: pitch, r: roll)
-                                    print("values: \(pitch) \(roll)")
+                                     self.setWheelsfromAccel(p: yaw, r: roll)
+                                    print("values: \(yaw) \(roll)")
                                 }
                              /*   // Get the accelerometer data.
                                 if let data = self.motion.accelerometerData {
@@ -457,6 +432,21 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
             RunLoop.current.add(self.timer, forMode: .defaultRunLoopMode)
         }
     }
+    
+    
+    @IBAction func clickStartStop(_ sender: UIButton) {    
+        print("it worked")
+        if isDriving {
+            print("stop")
+            writeString(val: "s")
+            sender.setTitle("drive", for: UIControlState.normal)
+        }else {
+            print("go")
+            sender.setTitle("Stop", for: UIControlState.normal)
+        }
+        isDriving = !isDriving
+    }
+    
     func mapRange(a1: Double, a2: Double, b1: Double, b2: Double, s: Double) -> Double {
         return b1 + ((s - a1)*(b2 - b1))/(a2 - a1)
     }
@@ -465,28 +455,30 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         var rightSpeed: UInt8 = 0
         var leftSpeed: UInt8 = 0
         
-        var posPitch = false
+        var posYaw = false
         var posRoll = false
         
         if (p > 0) {
-            posPitch = true;
+            posYaw = true;
         }
+        print("yawValues")
         if (r > 0) {
             posRoll = true
         }
-    
-        let pitch = abs(p)
-        let roll = abs(r)
-        rightSpeed = UInt8.init(mapRange(a1: 0, a2: 10, b1: 0, b2: 127, s: roll))
+        print("rollValues")
+        let yaw = p
+        let roll = r
+        rightSpeed = UInt8.init(mapRange(a1: -Double.pi, a2: Double.pi, b1: 0, b2: 127, s: roll))
+        print("rightSpeed: \(rightSpeed)")
         leftSpeed = rightSpeed
-        let pitchPct = mapRange(a1: 0, a2: 10, b1: 0, b2: 1, s: pitch)
-       
-        if (posPitch) {
-            leftSpeed -= leftSpeed * UInt8.init(pitchPct)
+        let yawPct = mapRange(a1: -Double.pi, a2: Double.pi, b1: 0, b2: 1, s: yaw)
+        print("yaw: \(yawPct)")
+        if (posYaw) {
+            leftSpeed -= leftSpeed * UInt8.init(yawPct)
         } else {
-            rightSpeed -= rightSpeed * UInt8.init(pitchPct)
+            rightSpeed -= rightSpeed * UInt8.init(yawPct)
         }
-        if posRoll {
+        if (posRoll && isDriving) {
             print("Speed: \(rightSpeed) \(leftSpeed)")
             writeString(val: "v")
             writeInteger(val: rightSpeed)
