@@ -36,6 +36,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         loadViewIfNeeded();
         print("init1")
+        startAccelerometers()
     }
     
     
@@ -76,7 +77,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         centralManager?.stopScan()
     }
     
-    func writeInteger(val: UInt8) {
+    func writeInteger(val:UInt8) {
         if let blePeripheral = blePeripheral {
             if let txCharacteristic = txCharacteristic {
                 var num = val
@@ -414,7 +415,8 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
                                 if let data = self.motion.deviceMotion {
                                     let yaw = data.attitude.yaw
                                     let roll = data.attitude.roll
-                                     self.setWheelsfromAccel(p: yaw, r: roll)
+                                    let pitch = data.attitude.pitch
+                                    self.setWheelsfromAccel(p: pitch, r: roll, y: yaw)
                                     print("values: \(yaw) \(roll)")
                                 }
                              /*   // Get the accelerometer data.
@@ -447,46 +449,65 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         isDriving = !isDriving
     }
     
-    func mapRange(a1: Double, a2: Double, b1: Double, b2: Double, s: Double) -> Double {
-        return b1 + ((s - a1)*(b2 - b1))/(a2 - a1)
+    func mapRange(a1: Double, a2: Double, b1: Double, b2: Double, s: Double) -> UInt8 {
+        return (UInt8(b1 + ((s - a1)*(b2 - b1))/(a2 - a1)))
+    
     }
-    func setWheelsfromAccel (p: Double, r: Double){
+  
+        
+    func setWheelsfromAccel (p: Double, r: Double, y: Double){
         print("setWheelsfromAccel")
         var rightSpeed: UInt8 = 0
         var leftSpeed: UInt8 = 0
-        
-        var posYaw = false
+      
+
+        var posPitch = false
         var posRoll = false
         
         if (p > 0) {
-            posYaw = true;
+            posPitch = true;
         }
-        print("yawValues")
+        print("pitchValues")
         if (r > 0) {
             posRoll = true
         }
         print("rollValues")
-        let yaw = p
+        let pitch = p
         let roll = r
-        rightSpeed = UInt8.init(mapRange(a1: -Double.pi, a2: Double.pi, b1: 0, b2: 127, s: roll))
-        print("rightSpeed: \(rightSpeed)")
+        let yaw = y
+        rightSpeed = mapRange(a1: 0, a2: Double.pi, b1: 0, b2: 255, s: abs(roll))
+            print("rightSpeed: \(rightSpeed)")
         leftSpeed = rightSpeed
-        let yawPct = mapRange(a1: -Double.pi, a2: Double.pi, b1: 0, b2: 1, s: yaw)
-        print("yaw: \(yawPct)")
-        if (posYaw) {
-            leftSpeed -= leftSpeed * UInt8.init(yawPct)
+        let pitchPct = mapRange(a1: -Double.pi, a2: Double.pi, b1: 0, b2: 1, s: pitch)
+            print("pitch: \(pitchPct)")
+            print("roll: \(roll)")
+            print("yaw: \(yaw)")
+       
+        
+        if (posPitch) {
+            leftSpeed -= leftSpeed * UInt8.init(pitchPct)
         } else {
-            rightSpeed -= rightSpeed * UInt8.init(yawPct)
+            rightSpeed -= rightSpeed * UInt8.init(pitchPct)
         }
-        if (posRoll && isDriving) {
-            print("Speed: \(rightSpeed) \(leftSpeed)")
-            writeString(val: "v")
-            writeInteger(val: rightSpeed)
-            writeInteger(val: leftSpeed)
-        } else{
-            print("have no pos roll")
+        
+        
+        if isDriving {
+            if posRoll {
+                print("Speed: \(rightSpeed) \(leftSpeed)")
+               writeString(val: "v")
+                
+            } else{
+                writeString(val: "u")
+               /* print("have no pos roll") */
+                print("backwardsSpeed: \(rightSpeed) \(leftSpeed)")
+                writeInteger(val: rightSpeed)
+                writeInteger(val: leftSpeed)
+            }
+            
         }
+       
 }
     
 
 }
+
