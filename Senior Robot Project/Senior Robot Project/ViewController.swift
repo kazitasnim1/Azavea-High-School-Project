@@ -406,7 +406,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         // Make sure the accelerometer hardware is available.
         if self.motion.isAccelerometerAvailable {
             self.motion.accelerometerUpdateInterval = 45.0 / 60.0  // 60 Hz
-            self.motion.startDeviceMotionUpdates(using: .xMagneticNorthZVertical)
+            self.motion.startDeviceMotionUpdates ()
             print("start accelerometers")
             // Configure a timer to fetch the data.
         
@@ -416,7 +416,9 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
                                     let yaw = data.attitude.yaw
                                     let roll = data.attitude.roll
                                     let pitch = data.attitude.pitch
-                                    self.setWheelsfromAccel(p: pitch, r: roll, y: yaw)
+                                    let gravity = data.gravity
+                                    let rotation = atan2(gravity.x, gravity.y) + (Double.pi/2)
+                                    self.setWheelsfromAccel(p: pitch, r: roll, y: yaw, o: rotation)
                                     print("values: \(yaw) \(roll)")
                                 }
                              /*   // Get the accelerometer data.
@@ -455,11 +457,11 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     }
   
         
-    func setWheelsfromAccel (p: Double, r: Double, y: Double){
+    func setWheelsfromAccel (p: Double, r: Double, y: Double, o: Double){
         print("setWheelsfromAccel")
         var rightSpeed: UInt8 = 0
         var leftSpeed: UInt8 = 0
-      
+        print("rotation: \(o)")
 
         var posPitch = false
         var posRoll = false
@@ -484,14 +486,15 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
             print("yaw: \(yaw)")
        
         
-        if (posPitch) {
+    /*    if (posPitch) {
             leftSpeed -= leftSpeed * UInt8.init(pitchPct)
         } else {
             rightSpeed -= rightSpeed * UInt8.init(pitchPct)
-        }
+        } */
         
         
         if isDriving {
+        
             if posRoll {
                 print("Speed: \(rightSpeed) \(leftSpeed)")
                writeString(val: "v")
@@ -500,10 +503,10 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
                 writeString(val: "u")
                /* print("have no pos roll") */
                 print("backwardsSpeed: \(rightSpeed) \(leftSpeed)")
-                writeInteger(val: rightSpeed)
-                writeInteger(val: leftSpeed)
+               
             }
-            
+            writeInteger(val: rightSpeed)
+            writeInteger(val: leftSpeed)
         }
        
 }
