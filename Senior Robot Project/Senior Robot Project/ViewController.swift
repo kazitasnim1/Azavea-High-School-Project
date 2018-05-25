@@ -419,7 +419,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
                                     let gravity = data.gravity
                                     let rotation = atan2(gravity.x, gravity.y) + (Double.pi/2)
                                     self.setWheelsfromAccel(p: pitch, r: roll, y: yaw, o: rotation)
-                                    print("values: \(yaw) \(roll)")
+                                   
                                 }
                              /*   // Get the accelerometer data.
                                 if let data = self.motion.accelerometerData {
@@ -451,17 +451,16 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         isDriving = !isDriving
     }
     
-    func mapRange(a1: Double, a2: Double, b1: Double, b2: Double, s: Double) -> UInt8 {
-        return (UInt8(b1 + ((s - a1)*(b2 - b1))/(a2 - a1)))
+    func mapRange(a1: Double, a2: Double, b1: Double, b2: Double, s: Double) -> Double {
+        return (b1 + ((s - a1)*(b2 - b1))/(a2 - a1))
     
     }
   
         
     func setWheelsfromAccel (p: Double, r: Double, y: Double, o: Double){
-        print("setWheelsfromAccel")
-        var rightSpeed: UInt8 = 0
-        var leftSpeed: UInt8 = 0
-        print("rotation: \(o)")
+        var rightSpeed = 0.0
+        var leftSpeed = 0.0
+        print("raw rotation: \(o)")
 
         var posPitch = false
         var posRoll = false
@@ -469,28 +468,37 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         if (p > 0) {
             posPitch = true;
         }
-        print("pitchValues")
         if (r > 0) {
             posRoll = true
         }
-        print("rollValues")
         let pitch = p
         let roll = r
         let yaw = y
+        let rotation = o
         rightSpeed = mapRange(a1: 0, a2: Double.pi, b1: 0, b2: 255, s: abs(roll))
-            print("rightSpeed: \(rightSpeed)")
         leftSpeed = rightSpeed
-        let pitchPct = mapRange(a1: -Double.pi, a2: Double.pi, b1: 0, b2: 1, s: pitch)
-            print("pitch: \(pitchPct)")
-            print("roll: \(roll)")
-            print("yaw: \(yaw)")
+        print("rightSpeed: \(rightSpeed) \(leftSpeed)")
+        let rotationPct = mapRange(a1: 0, a2: 6, b1: 0, b2: 1, s: abs(rotation))
+        print("rotation percent: \(rotationPct)")
+        print("roll: \(roll)")
+        print("rotation: \(rotation)")
        
         
-    /*    if (posPitch) {
-            leftSpeed -= leftSpeed * UInt8.init(pitchPct)
+        if (posPitch) {
+            leftSpeed -= leftSpeed * rotationPct
+            if leftSpeed < 0 {
+                leftSpeed = 0
+            } else if leftSpeed > 255 {
+                leftSpeed = 255
+            }
         } else {
-            rightSpeed -= rightSpeed * UInt8.init(pitchPct)
-        } */
+            rightSpeed -= rightSpeed * rotationPct
+            if rightSpeed < 0 {
+                rightSpeed = 0
+            } else if rightSpeed > 255 {
+                rightSpeed = 255
+            }
+        }
         
         
         if isDriving {
@@ -505,8 +513,9 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
                 print("backwardsSpeed: \(rightSpeed) \(leftSpeed)")
                
             }
-            writeInteger(val: rightSpeed)
-            writeInteger(val: leftSpeed)
+        
+            writeInteger(val: UInt8(rightSpeed))
+            writeInteger(val: UInt8(leftSpeed))
         }
        
 }
