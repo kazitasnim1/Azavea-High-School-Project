@@ -21,6 +21,7 @@ let halfPi = Double.pi / 2
 class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     @IBOutlet weak var button: UIButton!
+    @IBOutlet weak var batteryLabel: UILabel!
     
     //Data
     var centralManager : CBCentralManager!
@@ -31,12 +32,14 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     var characteristics = [String : CBCharacteristic]()
     var motion = CMMotionManager()
     var isDriving = false
+    var isSpinning = false
     var battery = ""
     
     enum DrivingState {
         case connecting
         case failed
         case driving
+        case spinning
         case stopped
     }
     
@@ -93,11 +96,17 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
     }
     
     func writeString(val: String) {
-        print(val)
-        let str = (val as NSString).data(using: String.Encoding.utf8.rawValue)
+        var data: [UInt8] = Array(repeating: 0, count: 8)
+        let ptr = UnsafeMutablePointer<Int8>.allocate(capacity: 1)
+        ptr.initialize(from: val, count: 1)
+        (val as NSString).getCString(ptr, maxLength: 1, encoding: String.Encoding.utf8.rawValue)
+        data[0] = UInt8.init(ptr.pointee)
+        //let str = (val as NSString).data(using: String.Encoding.utf8.rawValue)
         if let blePeripheral = blePeripheral {
             if let txCharacteristic = txCharacteristic {
-                blePeripheral.writeValue(str!, for: txCharacteristic, type: CBCharacteristicWriteType.withResponse)
+                print("writing string: \(data)")
+                blePeripheral.writeValue(Data.init(bytes: data), for: txCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
+                //blePeripheral.writeValue(str!, for: txCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
             }
         } else {
             print("No device to transmit to")
@@ -132,7 +141,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
             
         } else {
             button.setTitleColor(UIColor.orange, for: .normal)
-            button.setTitle("Restart to connect", for: .normal)
+            button.setTitle("Retry to connect", for: .normal)
             buttonState = DrivingState.failed
         }
     }
@@ -299,7 +308,27 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
                 }
                 
                 if battery.count >= 8 {
+                    // only keep first eight characters, if more came in
+                    if battery.count > 8 {
+                        battery = String(Array(battery)[0..<8])
+                    }
                     print("Got battery reading: \(battery)")
+                    if let batt = Double(battery) {
+                        // round to 3 digits precision
+                        let num = Double(round(1000 * batt) / 1000)
+                        batteryLabel.text = "Battery level: \(num)"
+                        if let batt = Float.init(battery) {
+                            if (batt > 4) {
+                                batteryLabel.textColor = UIColor.green
+                            } else if (batt > 3) {
+                                batteryLabel.textColor = UIColor.yellow
+                            } else {
+                                batteryLabel.textColor = UIColor.red
+                            }
+                        }
+                    } else {
+                        print("Couldn't parse battery reading \(battery)")
+                    }
                 }
             }
         }
@@ -323,6 +352,7 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
             }
 
             startAccelerometers()
+            pollBattery()
         }
     }
     
@@ -395,18 +425,29 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
             self.present(alertVC, animated: true, completion: nil)
         }
     }
+    
+    func pollBattery() {
+        // make initial request immediately
+        self.writeString(val: "b")
+        self.battery = "" // read the response into this string
+        
+        // schedule updates
+        Timer.scheduledTimer(withTimeInterval: (15), repeats: true, block: { (timer) in
+            print("requesting battery status")
+            // request battery status
+            self.battery = ""
+            self.writeString(val: "b")
+        })
+    }
+    
     func startAccelerometers() {
         // Make sure the accelerometer hardware is available.
         if self.motion.isAccelerometerAvailable {
             self.motion.accelerometerUpdateInterval = 45.0 / 60.0  // 60 Hz
             self.motion.startDeviceMotionUpdates()
             print("start accelerometers")
-            // Configure a timer to fetch the data.
-            
-            // request battery status
-            writeString(val: "b")
-            battery = "" // read the response into this string
         
+            self.timer.invalidate()
             self.timer = Timer(fire: Date(), interval: (1), repeats: true, block: { (timer) in
                 if let data = self.motion.deviceMotion {
                     // atan2(x, y) is roughly the same as data.attitude.roll
@@ -423,26 +464,59 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         }
     }
     
+    func stopDriving() {
+        print("stop")
+        writeString(val: "s")
+        button.setTitleColor(.green, for: .normal)
+        button.setTitle("Start driving", for: UIControlState.normal)
+        buttonState = DrivingState.stopped
+        isDriving = false
+    }
+    
+    func spin(direction: String) {
+        print("spin")
+        stopDriving()
+        if !isSpinning {
+            buttonState = DrivingState.spinning
+            writeString(val: direction)
+            button.setTitle("Stop", for: .normal)
+            button.setTitleColor(.red, for: .normal)
+        }
+        
+        isSpinning = !isSpinning
+    }
+    
+    @IBAction func spinRight(_ sender: UIButton) {
+        spin(direction: "y")
+    }
+    
+    @IBAction func spinLeft(_ sender: UIButton) {
+        spin(direction: "z")
+    }
     
     @IBAction func clickStartStop(_ sender: UIButton) {
         if isDriving {
-            print("stop")
-            writeString(val: "s")
-            sender.setTitleColor(.green, for: .normal)
-            sender.setTitle("Start driving", for: UIControlState.normal)
-            buttonState = DrivingState.stopped
+            // stop driving
+            stopDriving()
+        } else if isSpinning {
+            // stop spinning
+            stopDriving()
         } else if (buttonState == DrivingState.failed) {
+            // restart scanning for bluetooth
             startScan()
             buttonState = DrivingState.connecting
             button.setTitle("Connecting...", for: .normal)
             button.setTitleColor(UIColor.gray, for: .normal)
-        } else {
+            isDriving = false
+        } else if (buttonState == DrivingState.stopped) {
             print("go")
+            // start driving
             sender.setTitleColor(.red, for: .normal)
             sender.setTitle("Stop", for: UIControlState.normal)
             buttonState = DrivingState.driving
+            isDriving = true
         }
-        isDriving = !isDriving
+        isSpinning = false
     }
     
     static func mapRange(a1: Double, a2: Double, b1: Double, b2: Double, s: Double) -> Double {
@@ -454,20 +528,17 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         var rightSpeed = 0.0
         var leftSpeed = 0.0
         
-        let speed = BLECentralViewController.mapRange(a1: -1, a2: 1, b1: 0, b2: 255, s: x)
+        // max speed is half of what m3pi can do, for more gradual ramp
+        let speed = BLECentralViewController.mapRange(a1: -1, a2: 1, b1: 0, b2: 128, s: x)
         rightSpeed = speed
         leftSpeed = speed
 
-        // -1 for y axis is all the way right and 1 is all the way left
-        // print("rotation percent: \(y)")
-        
         if (y > 0) {
-            leftSpeed -= leftSpeed * y
-            rightSpeed -= rightSpeed * (y / 2)
+            leftSpeed += leftSpeed * y
+            rightSpeed += rightSpeed * (y / 2)
         } else {
-            // since y is negative, this will slow the right wheel
-            rightSpeed += rightSpeed * y
-            leftSpeed += leftSpeed * (y / 2)
+            rightSpeed -= rightSpeed * y
+            leftSpeed -= leftSpeed * (y / 2)
         }
         
         if leftSpeed < 0 {
