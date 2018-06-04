@@ -16,68 +16,56 @@ var rxCharacteristic : CBCharacteristic?
 var blePeripheral : CBPeripheral?
 var characteristicASCIIValue = NSString()
 
-
+let halfPi = Double.pi / 2
 
 class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
+    
+    @IBOutlet weak var button: UIButton!
+    @IBOutlet weak var batteryLabel: UILabel!
     
     //Data
     var centralManager : CBCentralManager!
     var RSSIs = [NSNumber]()
-    var data = NSMutableData()
-    var writeData: String = ""
     var peripherals: [CBPeripheral] = []
     var characteristicValue = [CBUUID: NSData]()
     var timer = Timer()
     var characteristics = [String : CBCharacteristic]()
     var motion = CMMotionManager()
     var isDriving = false
+    var isSpinning = false
+    var battery = ""
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-       super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        loadViewIfNeeded();
-        print("init1")
-        startAccelerometers()
+    enum DrivingState {
+        case connecting
+        case failed
+        case driving
+        case spinning
+        case stopped
     }
     
+    var buttonState = DrivingState.connecting
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        print("init2")
-    }
-    
-    
-    @IBAction func refreshAction(_ sender: AnyObject) {
-        disconnectFromDevice()
-        self.peripherals = []
-        self.RSSIs = []
-        startScan()
-    }
-    
-    override func viewDidLoad() {
-        print("viewDidLoad")
-        super.viewDidLoad()
-        
-        /*Our key player in this app will be our CBCentralManager. CBCentralManager objects are used to manage discovered or connected remote peripheral devices (represented by CBPeripheral objects), including scanning for, discovering, and connecting to advertising peripherals.
-         */
+        print("init")
         centralManager = CBCentralManager(delegate: self, queue: nil)
-        let backButton = UIBarButtonItem(title: "Disconnect", style: .plain, target: nil, action: nil)
-        navigationItem.backBarButtonItem = backButton
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        print("view appeared")
         disconnectFromDevice()
         super.viewDidAppear(animated)
-        print("View Cleared")
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        print("Stop Scanning")
+        print("Stopping")
         centralManager?.stopScan()
+        if motion.isDeviceMotionActive {
+            motion.stopDeviceMotionUpdates()
+        }
     }
     
-    func writeInteger(val:UInt8) {
+    func writeInteger(val: UInt8) {
         if let blePeripheral = blePeripheral {
             if let txCharacteristic = txCharacteristic {
                 var num = val
@@ -91,34 +79,48 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         }
     }
     
-    func writeString(val: String) {
-        print(val)
-        let str = (val as NSString).data(using: String.Encoding.utf8.rawValue)
+    func writeDrivingDirections(cmd: String, left: UInt8, right: UInt8) {
         if let blePeripheral = blePeripheral {
             if let txCharacteristic = txCharacteristic {
-                blePeripheral.writeValue(str!, for: txCharacteristic, type: CBCharacteristicWriteType.withResponse)
+                var data: [UInt8] = Array(repeating: 0, count: 8)
+                let ptr = UnsafeMutablePointer<Int8>.allocate(capacity: 1)
+                ptr.initialize(from: cmd, count: 1)
+                (cmd as NSString).getCString(ptr, maxLength: 1, encoding: String.Encoding.utf8.rawValue)
+                data[0] = UInt8.init(ptr.pointee)
+                data[1] = left
+                data[2] = right
+                print("writing: \(data)")
+                blePeripheral.writeValue(Data.init(bytes: data), for: txCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
+            }
+        }
+    }
+    
+    func writeString(val: String) {
+        var data: [UInt8] = Array(repeating: 0, count: 8)
+        let ptr = UnsafeMutablePointer<Int8>.allocate(capacity: 1)
+        ptr.initialize(from: val, count: 1)
+        (val as NSString).getCString(ptr, maxLength: 1, encoding: String.Encoding.utf8.rawValue)
+        data[0] = UInt8.init(ptr.pointee)
+        //let str = (val as NSString).data(using: String.Encoding.utf8.rawValue)
+        if let blePeripheral = blePeripheral {
+            if let txCharacteristic = txCharacteristic {
+                print("writing string: \(data)")
+                blePeripheral.writeValue(Data.init(bytes: data), for: txCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
+                //blePeripheral.writeValue(str!, for: txCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
             }
         } else {
             print("No device to transmit to")
         }
     }
-    
-    func testDrive() {
-        writeString(val: "b")
-        //writeString(val: "5")
-        //writeString(val: "5")
-        //writeInteger(val: 5)
-        //writeInteger(val: 5)
-    }
-    
+
     /*Okay, now that we have our CBCentalManager up and running, it's time to start searching for devices. You can do this by calling the "scanForPeripherals" method.*/
     
     func startScan() {
         peripherals = []
         print("Now Scanning...")
         self.timer.invalidate()
-        centralManager?.scanForPeripherals(withServices: [BLEService_UUID] , options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
-        Timer.scheduledTimer(timeInterval: 7, target: self, selector: #selector(self.cancelScan), userInfo: nil, repeats: false)
+        centralManager?.scanForPeripherals(withServices: [BLEService_UUID], options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
+        Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.cancelScan), userInfo: nil, repeats: false)
     }
     
     /*We also need to stop scanning at some point so we'll also create a function that calls "stopScan"*/
@@ -127,18 +129,20 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         print("Scan Stopped")
         print("Number of Peripherals Found: \(peripherals.count)")
         
-        if (peripherals.count > 1) {
-            print("Found more than one peripheral! All are:")
-            for peripheral in peripherals {
-                print("\(peripheral.name)")
-            }
-        }
-        
+        print("stopped scan with \(peripherals.count) peripherals found")
         if (peripherals.count > 0) {
-            print("Found peripheral; connecting...")
             blePeripheral = peripherals[0]
-            print("\(blePeripheral?.name)")
             connectToDevice()
+            
+            print("connecting to first device found")
+            button.setTitleColor(UIColor.green, for: .normal)
+            button.setTitle("Start driving", for: .normal)
+            buttonState = DrivingState.stopped
+            
+        } else {
+            button.setTitleColor(UIColor.orange, for: .normal)
+            button.setTitle("Retry to connect", for: .normal)
+            buttonState = DrivingState.failed
         }
     }
     
@@ -162,11 +166,11 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         centralManager?.delegate = self
     }
     
+    
     /*
      Called when the central manager discovers a peripheral while scanning. Also, once peripheral is connected, cancel scanning.
      */
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         blePeripheral = peripheral
         self.peripherals.append(peripheral)
         self.RSSIs.append(RSSI)
@@ -200,25 +204,11 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         centralManager?.stopScan()
         print("Scan Stopped")
         
-        //Erase data that we might have
-        data.length = 0
-        
         //Discovery callback
         peripheral.delegate = self
         //Only look for services that matches transmit uuid
         peripheral.discoverServices([BLEService_UUID])
         print("Finish connecting")
-     /*
-        //Once connected, move to new view controller to manager incoming and outgoing data
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        
-        let uartViewController = storyboard.instantiateViewController(withIdentifier: "UartModuleViewController") as! UartModuleViewController
-        
-        uartViewController.peripheral = peripheral
-        
-        navigationController?.pushViewController(uartViewController, animated: true)
-    */
-        
     }
 
     /*
@@ -310,9 +300,36 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         if characteristic == rxCharacteristic {
             if let ASCIIstring = NSString(data: characteristic.value!, encoding: String.Encoding.utf8.rawValue) {
                 characteristicASCIIValue = ASCIIstring
-                print("Value Recieved: \((characteristicASCIIValue as String))")
+                let val = characteristicASCIIValue as String
+                print("Value Recieved: \(val)")
                 NotificationCenter.default.post(name:NSNotification.Name(rawValue: "Notify"), object: nil)
+                if battery.count < 8 {
+                    battery.append(val)
+                }
                 
+                if battery.count >= 8 {
+                    // only keep first eight characters, if more came in
+                    if battery.count > 8 {
+                        battery = String(Array(battery)[0..<8])
+                    }
+                    print("Got battery reading: \(battery)")
+                    if let batt = Double(battery) {
+                        // round to 3 digits precision
+                        let num = Double(round(1000 * batt) / 1000)
+                        batteryLabel.text = "Battery level: \(num)"
+                        if let batt = Float.init(battery) {
+                            if (batt > 4) {
+                                batteryLabel.textColor = UIColor.green
+                            } else if (batt > 3) {
+                                batteryLabel.textColor = UIColor.yellow
+                            } else {
+                                batteryLabel.textColor = UIColor.red
+                            }
+                        }
+                    } else {
+                        print("Couldn't parse battery reading \(battery)")
+                    }
+                }
             }
         }
     }
@@ -333,10 +350,9 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
                 print("Rx Value \(String(describing: rxCharacteristic?.value))")
                 print("Tx Value \(String(describing: txCharacteristic?.value))")
             }
-            
-            // TODO: here? elsewhere?
-            
+
             startAccelerometers()
+            pollBattery()
         }
     }
     
@@ -379,6 +395,14 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         print("Succeeded!")
     }
     
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor descriptor: CBDescriptor, error: Error?) {
+        guard error == nil else {
+            print("Error updating value: \(error)")
+            return
+        }
+        print("Updated descriptor value: \(descriptor.value)")
+    }
+    
     
     /*
      Invoked when the central manager’s state is updated.
@@ -389,7 +413,6 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
             // We will just handle it the easy way here: if Bluetooth is on, proceed...start scan!
             print("Bluetooth Enabled")
             startScan()
-            
         } else {
             //If Bluetooth is off, display a UI alert message saying "Bluetooth is not enable" and "Make sure that your bluetooth is turned on"
             print("Bluetooth Disabled- Make sure your Bluetooth is turned on")
@@ -402,34 +425,38 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
             self.present(alertVC, animated: true, completion: nil)
         }
     }
+    
+    func pollBattery() {
+        // make initial request immediately
+        self.writeString(val: "b")
+        self.battery = "" // read the response into this string
+        
+        // schedule updates
+        Timer.scheduledTimer(withTimeInterval: (15), repeats: true, block: { (timer) in
+            print("requesting battery status")
+            // request battery status
+            self.battery = ""
+            self.writeString(val: "b")
+        })
+    }
+    
     func startAccelerometers() {
         // Make sure the accelerometer hardware is available.
         if self.motion.isAccelerometerAvailable {
             self.motion.accelerometerUpdateInterval = 45.0 / 60.0  // 60 Hz
-            self.motion.startDeviceMotionUpdates ()
+            self.motion.startDeviceMotionUpdates()
             print("start accelerometers")
-            // Configure a timer to fetch the data.
         
-             self.timer = Timer(fire: Date(), interval: (45.0/60.0),
-                               repeats: true, block: { (timer) in
-                                if let data = self.motion.deviceMotion {
-                                    let yaw = data.attitude.yaw
-                                    let roll = data.attitude.roll
-                                    let pitch = data.attitude.pitch
-                                    let gravity = data.gravity
-                                    let rotation = atan2(gravity.x, gravity.y) + (Double.pi/2)
-                                    self.setWheelsfromAccel(p: pitch, r: roll, y: yaw, o: rotation)
-                                   
-                                }
-                             /*   // Get the accelerometer data.
-                                if let data = self.motion.accelerometerData {
-                                    let x = data.acceleration.x
-                                    let y = data.acceleration.y
-                                    let z = data.acceleration.z
-                                    print("got a reading: \(x) \(y) \(z)")
-                                    setWheelsfromAccel(p: <#T##Double#>, r: <#T##Double#>)
-                                    // Use the accelerometer data in your app.
-                                }*/
+            self.timer.invalidate()
+            self.timer = Timer(fire: Date(), interval: (1), repeats: true, block: { (timer) in
+                if let data = self.motion.deviceMotion {
+                    // atan2(x, y) is roughly the same as data.attitude.roll
+                    let gravity = data.gravity
+                    let forwards = gravity.z < 0
+                    print("forwards? \(forwards)")
+                    print("x \(gravity.x) y \(gravity.y) z \(gravity.z)")
+                    self.setWheelsfromAccel(x: gravity.x, y: gravity.y, forwards: forwards)
+                }
             })
             
             // Add the timer to the current run loop.
@@ -437,87 +464,114 @@ class BLECentralViewController : UIViewController, CBCentralManagerDelegate, CBP
         }
     }
     
-    
-    @IBAction func clickStartStop(_ sender: UIButton) {    
-        print("it worked")
-        if isDriving {
-            print("stop")
-            writeString(val: "s")
-            sender.setTitle("drive", for: UIControlState.normal)
-        }else {
-            print("go")
-            sender.setTitle("Stop", for: UIControlState.normal)
-        }
-        isDriving = !isDriving
+    func stopDriving() {
+        print("stop")
+        writeString(val: "s")
+        button.setTitleColor(.green, for: .normal)
+        button.setTitle("Start driving", for: UIControlState.normal)
+        buttonState = DrivingState.stopped
+        isDriving = false
     }
     
-    func mapRange(a1: Double, a2: Double, b1: Double, b2: Double, s: Double) -> Double {
-        return (b1 + ((s - a1)*(b2 - b1))/(a2 - a1))
+    func spin(direction: String) {
+        print("spin")
+        stopDriving()
+        if !isSpinning {
+            buttonState = DrivingState.spinning
+            writeString(val: direction)
+            button.setTitle("Stop", for: .normal)
+            button.setTitleColor(.red, for: .normal)
+        }
+        
+        isSpinning = !isSpinning
+    }
     
+    @IBAction func spinRight(_ sender: UIButton) {
+        spin(direction: "y")
+    }
+    
+    @IBAction func spinLeft(_ sender: UIButton) {
+        spin(direction: "z")
+    }
+    
+    @IBAction func clickStartStop(_ sender: UIButton) {
+        if isDriving {
+            // stop driving
+            stopDriving()
+        } else if isSpinning {
+            // stop spinning
+            stopDriving()
+        } else if (buttonState == DrivingState.failed) {
+            // restart scanning for bluetooth
+            startScan()
+            buttonState = DrivingState.connecting
+            button.setTitle("Connecting...", for: .normal)
+            button.setTitleColor(UIColor.gray, for: .normal)
+            isDriving = false
+        } else if (buttonState == DrivingState.stopped) {
+            print("go")
+            // start driving
+            sender.setTitleColor(.red, for: .normal)
+            sender.setTitle("Stop", for: UIControlState.normal)
+            buttonState = DrivingState.driving
+            isDriving = true
+        }
+        isSpinning = false
+    }
+    
+    static func mapRange(a1: Double, a2: Double, b1: Double, b2: Double, s: Double) -> Double {
+        return (b1 + ((s - a1)*(b2 - b1))/(a2 - a1))
     }
   
         
-    func setWheelsfromAccel (p: Double, r: Double, y: Double, o: Double){
+    func setWheelsfromAccel (x: Double, y: Double, forwards: Bool) {
         var rightSpeed = 0.0
         var leftSpeed = 0.0
-        print("raw rotation: \(o)")
+        
+        // max speed is half of what m3pi can do, for more gradual ramp
+        let speed = BLECentralViewController.mapRange(a1: -1, a2: 1, b1: 0, b2: 128, s: x)
+        rightSpeed = speed
+        leftSpeed = speed
 
-        var posPitch = false
-        var posRoll = false
-        
-        if (p > 0) {
-            posPitch = true;
-        }
-        if (r > 0) {
-            posRoll = true
-        }
-        let pitch = p
-        let roll = r
-        let yaw = y
-        let rotation = o
-        rightSpeed = mapRange(a1: 0, a2: Double.pi, b1: 0, b2: 255, s: abs(roll))
-        leftSpeed = rightSpeed
-        print("rightSpeed: \(rightSpeed) \(leftSpeed)")
-        let rotationPct = mapRange(a1: 0, a2: 6, b1: 0, b2: 1, s: abs(rotation))
-        print("rotation percent: \(rotationPct)")
-        print("roll: \(roll)")
-        print("rotation: \(rotation)")
-       
-        
-        if (posPitch) {
-            leftSpeed -= leftSpeed * rotationPct
-            if leftSpeed < 0 {
-                leftSpeed = 0
-            } else if leftSpeed > 255 {
-                leftSpeed = 255
-            }
+        if (y > 0) {
+            leftSpeed += leftSpeed * y
+            rightSpeed += rightSpeed * (y / 2)
         } else {
-            rightSpeed -= rightSpeed * rotationPct
-            if rightSpeed < 0 {
-                rightSpeed = 0
-            } else if rightSpeed > 255 {
-                rightSpeed = 255
-            }
+            rightSpeed -= rightSpeed * y
+            leftSpeed -= leftSpeed * (y / 2)
         }
         
+        if leftSpeed < 0 {
+            leftSpeed = 0
+            print("negative left speed: \(leftSpeed)")
+            return
+        } else if leftSpeed >= 255 {
+            leftSpeed = 255
+            print("excessive left speed: \(leftSpeed)")
+            return
+        }
+        
+        if rightSpeed < 0 {
+            rightSpeed = 0
+            print("negative right speed: \(rightSpeed)")
+            return
+        } else if rightSpeed >= 255 {
+            rightSpeed = 255
+            print("excessive right speed: \(rightSpeed)")
+            return
+        }
+       
+        var cmd = "f"
+        if forwards {
+            print("forward speed: \(speed) \(rightSpeed) \(leftSpeed)")
+        } else{
+            print("reverse speed: \(speed) \(rightSpeed) \(leftSpeed)")
+            cmd = "r"
+        }
         
         if isDriving {
-        
-            if posRoll {
-                print("Speed: \(rightSpeed) \(leftSpeed)")
-               writeString(val: "v")
-                
-            } else{
-                writeString(val: "u")
-               /* print("have no pos roll") */
-                print("backwardsSpeed: \(rightSpeed) \(leftSpeed)")
-               
-            }
-        
-            writeInteger(val: UInt8(rightSpeed))
-            writeInteger(val: UInt8(leftSpeed))
+            writeDrivingDirections(cmd: cmd, left: UInt8.init(leftSpeed), right: UInt8.init(rightSpeed))
         }
-       
 }
     
 

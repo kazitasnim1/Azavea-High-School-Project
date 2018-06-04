@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="lLa-XU-43Z">
-    <device id="retina5_9" orientation="landscape">
+    <device id="retina4_7" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -15,27 +15,57 @@
             <objects>
                 <viewController id="lLa-XU-43Z" customClass="BLECentralViewController" customModule="Senior_Robot_Project" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ONN-1f-8IL">
-                        <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
+                        <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u5D-GY-7y0">
-                                <rect key="frame" x="306" y="140" width="221" height="97"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u5D-GY-7y0">
+                                <rect key="frame" x="217" y="159" width="232" height="57"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="37"/>
-                                <state key="normal" title="Start">
-                                    <color key="titleColor" red="0.0" green="0.56031829119999998" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                    <color key="titleShadowColor" red="0.23163855429999999" green="0.82547360749999998" blue="0.80549237559999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="Connecting...">
+                                    <color key="titleColor" name="systemGrayColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.69872359149999996" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
                                     <action selector="clickStartStop:" destination="lLa-XU-43Z" eventType="touchUpInside" id="DgD-MB-EZb"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Battery level" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yom-Cw-dRQ">
+                                <rect key="frame" x="217" y="20" width="232" height="51"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                <nil key="textColor"/>
+                                <color key="highlightedColor" name="systemGrayColor" catalog="System" colorSpace="catalog"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Ea-bi-5d8">
+                                <rect key="frame" x="15" y="20" width="101" height="51"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Spin left"/>
+                                <connections>
+                                    <action selector="spinLeft:" destination="lLa-XU-43Z" eventType="touchUpInside" id="Ubr-qR-XTB"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EeU-Vc-5YO">
+                                <rect key="frame" x="564" y="20" width="83" height="51"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Spin right"/>
+                                <connections>
+                                    <action selector="spinRight:" destination="lLa-XU-43Z" eventType="touchUpInside" id="VKZ-Mz-ROA"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="u5D-GY-7y0" firstAttribute="centerX" secondItem="ONN-1f-8IL" secondAttribute="centerX" id="A1j-Qv-UGe"/>
+                            <constraint firstItem="u5D-GY-7y0" firstAttribute="centerY" secondItem="ONN-1f-8IL" secondAttribute="centerY" id="aOB-yJ-aG2"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="B1Z-J0-Y5h"/>
                     </view>
                     <navigationItem key="navigationItem" id="FpL-ff-cr9"/>
+                    <connections>
+                        <outlet property="batteryLabel" destination="yom-Cw-dRQ" id="oVT-lw-Bbq"/>
+                        <outlet property="button" destination="u5D-GY-7y0" id="LDZ-1W-QlI"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jZh-pz-I9c" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
